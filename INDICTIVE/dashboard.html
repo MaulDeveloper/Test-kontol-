@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DICTIVE CORE - Tools Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- GLOBAL RESET & VARS --- */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        :root {
+            --primary-black: #0a0a0a;
+            --carbon-dark: #121212;
+            --carbon-medium: #1a1a1a;
+            --carbon-light: #2a2a2a;
+            --platinum: #e5e4e2;
+            --platinum-light: #f8f8f8;
+            --platinum-dark: #d0d0d0;
+            --platinum-accent: #c0c0c0;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--primary-black);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-bottom: 80px; /* Space for taskbar */
+        }
+
+        /* --- BACKGROUND EFFECTS --- */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(229, 228, 226, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(248, 248, 248, 0.08) 0%, transparent 50%),
+                        var(--primary-black);
+            z-index: -2;
+        }
+
+        .animated-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(229, 228, 226, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(229, 228, 226, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: moveGrid 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes moveGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95);
+            border-bottom: 1px solid rgba(229, 228, 226, 0.2);
+            z-index: 1000;
+            padding: 12px 0;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--platinum-light), transparent);
+            opacity: 0.5;
+        }
+
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+            background: linear-gradient(135deg, var(--platinum-light), white);
+            border-radius: 6px;
+            transform: rotate(45deg);
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            font-weight: 900;
+            background: linear-gradient(45deg, white, var(--platinum-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- PHOTO CAROUSEL --- */
+        .photo-carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            height: 300px;
+        }
+
+        .photo-carousel {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .photo-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .photo-slide:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
+            display: flex;
+            align-items: flex-end;
+            padding: 30px;
+        }
+
+        .photo-content {
+            max-width: 600px;
+        }
+
+        .photo-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ffffff, var(--platinum));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .photo-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--platinum-light);
+            letter-spacing: 1px;
+        }
+
+        /* --- DASHBOARD SECTION --- */
+        .dashboard-section {
+            padding: 100px 20px 20px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, white, var(--platinum-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--platinum-light), transparent);
+        }
+
+        /* --- CAROUSEL CARDS --- */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 60px;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            padding: 20px 0;
+            cursor: grab;
+            overflow: hidden;
+        }
+
+        .carousel-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        /* Card Styles */
+        .uiverse-card {
+            width: 280px;
+            flex-shrink: 0;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            padding: 5px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-right: 20px;
+        }
+
+        .uiverse-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--platinum), transparent);
+            z-index: 1;
+        }
+
+        .uiverse-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 
+                0 15px 30px rgba(255, 255, 255, 0.1),
+                0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .uiverse-card .top-section {
+            height: 150px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .uiverse-card .top-section .border {
+            border-bottom-right-radius: 10px;
+            height: 30px;
+            width: 130px;
+            background: #1a1a1a;
+            position: relative;
+            transform: skew(-40deg);
+            box-shadow: -10px -10px 0 0 #1a1a1a;
+        }
+
+        .uiverse-card .top-section .border::before {
+            content: "";
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            top: 0;
+            right: -15px;
+            background: transparent;
+            border-top-left-radius: 10px;
+            box-shadow: -5px -5px 0 2px #1a1a1a;
+        }
+
+        .uiverse-card .top-section::after {
+            content: "";
+            position: absolute;
+            top: 30px;
+            left: 0;
+            background: transparent;
+            height: 15px;
+            width: 15px;
+            border-top-left-radius: 15px;
+            box-shadow: -5px -5px 0 2px #1a1a1a;
+        }
+
+        .uiverse-card .top-section .icons {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 30px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 15px;
+        }
+
+        .uiverse-card .top-section .icons .logo i {
+            font-size: 18px;
+            color: var(--platinum);
+            transition: all 0.3s ease;
+        }
+
+        .uiverse-card:hover .top-section .icons .logo i {
+            color: white;
+            transform: scale(1.2);
+        }
+
+        .uiverse-card .top-section .tool-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: var(--platinum);
+            transition: all 0.4s ease;
+        }
+
+        .uiverse-card:hover .top-section .tool-icon {
+            color: white;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .uiverse-card .bottom-section {
+            margin-top: 15px;
+            padding: 10px 5px;
+        }
+
+        .uiverse-card .bottom-section .title {
+            display: block;
+            font-size: 17px;
+            font-weight: bolder;
+            color: white;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .uiverse-card .bottom-section .description {
+            color: var(--platinum);
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .uiverse-card .bottom-section .row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .uiverse-card .bottom-section .row .item {
+            flex: 1;
+            text-align: center;
+            padding: 5px;
+            color: var(--platinum);
+        }
+
+        .uiverse-card .bottom-section .row .item .big-text {
+            font-size: 12px;
+            display: block;
+            font-weight: bold;
+        }
+
+        .uiverse-card .bottom-section .row .item .regular-text {
+            font-size: 9px;
+        }
+
+        .uiverse-card .bottom-section .row .item:nth-child(2) {
+            border-left: 1px solid rgba(255, 255, 255, 0.126);
+            border-right: 1px solid rgba(255, 255, 255, 0.126);
+        }
+
+        .uiverse-card .bottom-section .card-cta {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            color: var(--platinum);
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: block;
+            margin: 15px auto 0;
+            font-size: 13px;
+            font-family: 'Orbitron', monospace;
+            width: 80%;
+        }
+
+        .uiverse-card .bottom-section .card-cta:hover {
+            transform: translateY(-3px);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .auto-slide-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .indicator-dot.active {
+            background: var(--platinum-light);
+            transform: scale(1.2);
+        }
+
+        /* --- NEW COMPACT SOCIAL MEDIA CSS --- */
+        .social-media-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem 1rem 6rem; 
+            width: 100%;
+            margin-top: 0;
+        }
+
+        .social-media-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .social-media-headline {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ffffff, var(--platinum-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .social-media-tagline {
+            font-size: 1rem;
+            color: var(--platinum);
+            margin-bottom: 10px;
+        }
+        
+        .social-media-section-link {
+            color: var(--platinum);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--platinum);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .social-media-section-link:hover {
+            background-color: var(--platinum);
+            color: var(--primary-black);
+        }
+
+        /* GRID LAYOUT */
+        .social-media-cards-container {
+            width: 100%;
+            max-width: 900px; 
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
+            gap: 12px; 
+            padding: 0 10px;
+        }
+
+        /* MINI CARD */
+        .mini-card {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            height: 130px; 
+        }
+
+        .mini-card:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(145deg, rgba(40, 40, 40, 0.9), rgba(20, 20, 20, 0.9));
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .mini-card:active {
+            transform: scale(0.98);
+        }
+
+        .mini-card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff, #a5a5a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .mini-card:hover .mini-card-icon {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #fff, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .mini-card-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .mini-card:hover .mini-card-title {
+            color: #fff;
+        }
+
+        /* --- TASKBAR --- */
+        .taskbar-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .button-container {
+            display: flex;
+            background-color: rgba(18, 18, 18, 0.95);
+            width: 280px;
+            height: 50px;
+            align-items: center;
+            justify-content: space-around;
+            border-radius: 15px;
+            border: 1px solid rgba(229, 228, 226, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+        }
+
+        .button {
+            outline: 0 !important;
+            border: 0 !important;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--platinum);
+            transition: all ease-in-out 0.3s;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .icon {
+            font-size: 20px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .dashboard-section { padding: 80px 10px 40px; }
+            .section-title { font-size: 2rem; }
+            .photo-carousel-container { height: 200px; margin-bottom: 40px; }
+            .photo-title { font-size: 2rem; letter-spacing: 2px; }
+            .photo-subtitle { font-size: 1rem; }
+            .photo-overlay { padding: 20px; }
+            .uiverse-card { width: 260px; margin-right: 15px; }
+            .button-container { width: 250px; height: 45px; }
+        }
+
+        @media (max-width: 480px) {
+            .photo-carousel-container { height: 180px; }
+            .photo-title { font-size: 1.5rem; }
+            .photo-subtitle { font-size: 0.9rem; }
+            .button-container { width: 230px; height: 40px; }
+
+            /* Compact Grid for Mobile */
+            .social-media-cards-container {
+                grid-template-columns: repeat(3, 1fr); /* 3 Kolom di HP */
+                gap: 8px;
+            }
+            .mini-card {
+                height: 100px;
+                padding: 15px 5px;
+            }
+            .mini-card-icon {
+                font-size: 1.8rem;
+                margin-bottom: 8px;
+            }
+            .mini-card-title {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            /* Layar sangat kecil jadi 2 kolom */
+            .social-media-cards-container {
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="animated-grid"></div>
+
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#dashboard" class="logo">
+                <div class="logo-icon"></div>
+                <span class="logo-text">INDICTIVE CORE</span>
+            </a>
+        </nav>
+    </header>
+
+    <section class="dashboard-section" id="dashboard">
+        <h2 class="section-title">Dashboard 01</h2>
+        
+        <div class="photo-carousel-container">
+            <div class="photo-carousel" id="photoCarousel"></div>
+        </div>
+        
+        <div class="carousel-container">
+            <div class="carousel-wrapper" id="carouselWrapper">
+                <div class="carousel-track" id="carouselTrack"></div>
+            </div>
+            <div class="auto-slide-indicator" id="slideIndicator"></div>
+        </div>
+        
+        <div class="social-media-section">
+            <header class="social-media-header">
+                <h2 class="social-media-headline">Connect</h2>
+                <p class="social-media-tagline">Social Media & Resources</p>
+                <a href="#" class="social-media-section-link">Back</a>
+            </header>
+
+            <div class="social-media-cards-container">
+                <a href="https://t.me/AiiStecu" class="mini-card" target="_blank">
+                    <i class="fab fa-telegram mini-card-icon"></i>
+                    <span class="mini-card-title">TELEGRAM</span>
+                </a>
+                
+                <a href="https://github.com/AiiSigma" class="mini-card" target="_blank">
+                    <i class="fab fa-github mini-card-icon"></i>
+                    <span class="mini-card-title">GITHUB</span>
+                </a>
+                
+                <a href="https://wa.me/6283820463478" class="mini-card" target="_blank">
+                    <i class="fab fa-whatsapp mini-card-icon"></i>
+                    <span class="mini-card-title">WHATSAPP</span>
+                </a>
+                
+                <a href="https://instagram.com/fachrinc" class="mini-card" target="_blank">
+                    <i class="fab fa-instagram mini-card-icon"></i>
+                    <span class="mini-card-title">INSTAGRAM</span>
+                </a>
+                
+                <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" class="mini-card" target="_blank">
+                    <i class="fab fa-html5 mini-card-icon"></i>
+                    <span class="mini-card-title">HTML5</span>
+                </a>
+                
+                <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" class="mini-card" target="_blank">
+                    <i class="fab fa-js-square mini-card-icon"></i>
+                    <span class="mini-card-title">JS DOCS</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="taskbar-container">
+        <div class="button-container">
+            <button class="button" id="homeButton">
+                <svg class="icon" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M946.5 505L560.1 118.8l-25.9-25.9a31.5 31.5 0 0 0-44.4 0L77.5 505a63.9 63.9 0 0 0-18.8 46c.4 35.2 29.7 63.3 64.9 63.3h42.5V940h691.8V614.3h43.4c17.1 0 33.2-6.7 45.3-18.8a63.6 63.6 0 0 0 18.7-45.3c0-17-6.7-33.1-18.8-45.2zM568 868H456V664h112v204zm217.9-325.7V868H632V640c0-22.1-17.9-40-40-40H432c-22.1 0-40 17.9-40 40v228H238.1V542.3h-96l370-369.7 23.1 23.1L882 542.3h-96.1z"></path>
+                </svg>
+            </button>
+            <button class="button" id="senderButton">
+                <svg class="icon" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4M20,18H4V6H20V18M6,10H8V12H6V10M6,14H14V16H6V14M16,14H18V16H16V14M10,10H18V12H10V10Z" />
+                </svg>
+            </button>
+            <button class="button" id="profileButton">
+                <svg class="icon" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 1 1-1.499.044 7.5 7.5 0 0 0-14.993 0 .75.75 0 0 1-1.5-.045 9.005 9.005 0 0 1 5.9-8.18A5.5 5.5 0 0 1 12 2.5ZM8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z"></path>
+                </svg>
+            </button>
+            <button class="button" id="logoutButton">
+                <svg class="icon" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const photoData = [
+            {
+                id: 1,
+                imageUrl: 'https://files.catbox.moe/9wrrby.jpg',
+                title: 'NEW UPDATE',
+                subtitle: 'Advanced Technology Solutions'
+            },
+            {
+                id: 2,
+                imageUrl: 'https://files.catbox.moe/cfllg0.jpg',
+                title: 'VERSION III',
+                subtitle: 'Next Generation Performance'
+            },
+            {
+                id: 3,
+                imageUrl: 'https://files.catbox.moe/8nrogd.jpeg',
+                title: 'DICTIVE CORE',
+                subtitle: 'Innovation at Your Fingertips'
+            }
+        ];
+
+        const menuData = [
+            {
+                id: 1,
+                title: 'SPAM NGL',
+                description: 'Tool untuk spam NGL dengan berbagai opsi dan konfigurasi.',
+                icon: 'fas fa-envelope',
+                stats: ['AUTO', 'CUSTOM', 'FAST'],
+                link: '/ngl-spam'
+            },
+            {
+                id: 2,
+                title: 'SPAM TELEGRAM',
+                description: 'Spam teks dan pesan lainnya ke user telegram.',
+                icon: 'fab fa-telegram',
+                stats: ['SPAM', 'ATTACK', 'TOOLS'],
+                link: '/telegram-spam'
+            },
+            {
+                id: 3,
+                title: 'My Sender',
+                description: 'Menambahkan sender dari nomor masing masing²',
+                icon: 'fa-solid fa-address-book',
+                stats: ['ADD', 'Number', 'Settings'],
+                link: '/my-senders'
+            },
+            {
+                id: 4,
+                title: 'TikTok Downloader',
+                description: 'Download video TikTok tanpa watermark dalam kualitas HD.',
+                icon: 'fab fa-tiktok',
+                stats: ['Video', 'No WM', 'HD'],
+                link: '/tiktok'
+            },
+            {
+                id: 5,
+                title: 'WhatsApp Bug\'s',
+                description: 'Bug WhatsApp Simple dengan API yang mudah digunakan.',
+                icon: 'fab fa-whatsapp',
+                stats: ['Attack', 'Payload', 'Bug'],
+                link: '/execution?from=dashboard'
+            }
+        ];
+
+        // Photo Carousel
+        const photoCarousel = document.getElementById('photoCarousel');
+        let currentPhotoIndex = 0;
+        let photoInterval;
+
+        function initPhotoCarousel() {
+            photoData.forEach((photo) => {
+                const slide = document.createElement('div');
+                slide.className = 'photo-slide';
+                slide.innerHTML = `
+                    <img src="${photo.imageUrl}" alt="${photo.title}">
+                    <div class="photo-overlay">
+                        <div class="photo-content">
+                            <h2 class="photo-title">${photo.title}</h2>
+                            <p class="photo-subtitle">${photo.subtitle}</p>
+                        </div>
+                    </div>
+                `;
+                photoCarousel.appendChild(slide);
+            });
+            startPhotoAutoSlide();
+        }
+
+        function startPhotoAutoSlide() {
+            if (photoInterval) clearInterval(photoInterval);
+            photoInterval = setInterval(() => {
+                currentPhotoIndex = (currentPhotoIndex + 1) % photoData.length;
+                photoCarousel.style.transform = `translateX(-${currentPhotoIndex * 100}%)`;
+            }, 5000);
+        }
+
+        // Cards Carousel
+        const carouselWrapper = document.getElementById('carouselWrapper');
+        const carouselTrack = document.getElementById('carouselTrack');
+        const slideIndicator = document.getElementById('slideIndicator');
+        
+        let cardWidth = 280;
+        let cardGap = 20;
+        let currentSlide = 0;
+        let autoSlideInterval;
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+        let direction = 1;
+        const autoSlideSpeed = 4000;
+
+        function getCardDimensions() {
+            const firstCard = carouselTrack.querySelector('.uiverse-card');
+            if (firstCard) {
+                const style = window.getComputedStyle(firstCard);
+                cardWidth = parseFloat(style.width);
+                cardGap = parseFloat(style.marginRight);
+            }
+        }
+
+        function getCarouselCenterOffset() {
+            const wrapperWidth = carouselWrapper.offsetWidth;
+            return (wrapperWidth / 2) - (cardWidth / 2);
+        }
+
+        function createCard(data) {
+            const card = document.createElement('div');
+            card.className = 'uiverse-card';
+            card.innerHTML = `
+                <div class="top-section">
+                    <div class="border"></div>
+                    <div class="icons">
+                        <div class="logo"><i class="${data.icon}"></i></div>
+                    </div>
+                    <div class="tool-icon"><i class="${data.icon}"></i></div>
+                </div>
+                <div class="bottom-section">
+                    <span class="title">${data.title}</span>
+                    <p class="description">${data.description}</p>
+                    <div class="row">
+                        <div class="item">
+                            <span class="big-text">${data.stats[0]}</span>
+                            <span class="regular-text">Feature</span>
+                        </div>
+                        <div class="item">
+                            <span class="big-text">${data.stats[1]}</span>
+                            <span class="regular-text">Feature</span>
+                        </div>
+                        <div class="item">
+                            <span class="big-text">${data.stats[2]}</span>
+                            <span class="regular-text">Feature</span>
+                        </div>
+                    </div>
+                    <button class="card-cta">OPEN TOOL</button>
+                </div>
+            `;
+            card.querySelector('.card-cta').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (data.link && data.link !== '#') {
+                    window.location.href = data.link; 
+                } else {
+                    alert(`Tool "${data.title}" sedang dalam pengembangan.`);
+                }
+            });
+            return card;
+        }
+
+        function initCarousel() {
+            menuData.forEach(data => {
+                carouselTrack.appendChild(createCard(data));
+            });
+            getCardDimensions();
+            adjustCarouselPosition();
+            createIndicators();
+            startAutoSlide();
+            addDragEvents();
+        }
+        
+        function adjustCarouselPosition() {
+            const offset = getCarouselCenterOffset();
+            carouselTrack.style.paddingLeft = `${offset}px`;
+            carouselTrack.style.paddingRight = `${offset}px`;
+            moveToSlide(currentSlide, false);
+        }
+
+        function createIndicators() {
+            slideIndicator.innerHTML = '';
+            menuData.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'indicator-dot';
+                if (i === currentSlide) dot.classList.add('active');
+                dot.addEventListener('click', () => moveToSlide(i));
+                slideIndicator.appendChild(dot);
+            });
+        }
+
+        function updateIndicators() {
+            document.querySelectorAll('.indicator-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function startAutoSlide() {
+            if (autoSlideInterval) clearInterval(autoSlideInterval);
+            autoSlideInterval = setInterval(() => {
+                let nextSlide = currentSlide + direction;
+                if (nextSlide >= menuData.length) {
+                    direction = -1;
+                    nextSlide = menuData.length - 2;
+                } else if (nextSlide < 0) {
+                    direction = 1;
+                    nextSlide = 1;
+                }
+                moveToSlide(nextSlide);
+            }, autoSlideSpeed);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        function moveToSlide(index, animate = true) {
+            currentSlide = Math.max(0, Math.min(index, menuData.length - 1));
+            const totalWidth = cardWidth + cardGap;
+            const targetPosition = currentSlide * totalWidth;
+            currentTranslate = -targetPosition;
+            prevTranslate = currentTranslate;
+            carouselTrack.style.transition = animate ? 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)' : 'none';
+            carouselTrack.style.transform = `translateX(${currentTranslate}px)`;
+            updateIndicators();
+        }
+
+        function addDragEvents() {
+            const getPositionX = (e) => e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            
+            function dragStart(e) {
+                startPos = getPositionX(e);
+                isDragging = true;
+                stopAutoSlide();
+                carouselTrack.style.transition = 'none';
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                const currentX = getPositionX(e);
+                const diff = currentX - startPos;
+                currentTranslate = prevTranslate + diff;
+                carouselTrack.style.transform = `translateX(${currentTranslate}px)`;
+            }
+            
+            function dragEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                carouselTrack.style.transition = 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                const movedBy = currentTranslate - prevTranslate;
+                const totalWidth = cardWidth + cardGap;
+                if (Math.abs(movedBy) > totalWidth / 3) {
+                    currentSlide = movedBy < 0 ? Math.min(currentSlide + 1, menuData.length - 1) : Math.max(currentSlide - 1, 0);
+                }
+                moveToSlide(currentSlide);
+                startAutoSlide();
+            }
+
+            carouselWrapper.addEventListener('mousedown', dragStart);
+            carouselWrapper.addEventListener('mousemove', drag);
+            carouselWrapper.addEventListener('mouseup', dragEnd);
+            carouselWrapper.addEventListener('mouseleave', dragEnd);
+            carouselWrapper.addEventListener('touchstart', dragStart);
+            carouselWrapper.addEventListener('touchmove', drag);
+            carouselWrapper.addEventListener('touchend', dragEnd);
+        }
+
+        // Taskbar Navigation
+        function setupTaskbarNavigation() {
+            const navigationMap = {
+                homeButton: '/option',     
+                senderButton: '/my-senders', 
+                profileButton: '/profile',
+                logoutButton: '/logout'
+            };
+            Object.keys(navigationMap).forEach(id => {
+                const button = document.getElementById(id);
+                if (button) {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault(); 
+                        window.location.href = navigationMap[id];
+                    });
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initPhotoCarousel();
+            initCarousel();
+            setupTaskbarNavigation();
+        });
+
+        window.addEventListener('resize', () => {
+            getCardDimensions();
+            adjustCarouselPosition();
+            stopAutoSlide();
+            startAutoSlide();
+        });
+    </script>
+</body>
+</html>

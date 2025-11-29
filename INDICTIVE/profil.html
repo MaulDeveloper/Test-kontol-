@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pengguna - DIGITAL CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variabel Warna - Ringan */
+        :root {
+            --color-black: #080808;
+            --color-dark-panel: #1a1a1a; 
+            --color-light: #F0F0F0; 
+            --color-silver: #A0A0A0; 
+            --color-grid: #333333; 
+            --color-warning: #FF5555; 
+            --color-success: #4ECDC4;
+        }
+
+        /* Gaya Dasar - Optimized */
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: var(--color-black);
+            color: var(--color-light);
+            margin: 0;
+            padding: 20px 10px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Container Utama */
+        .profile-container {
+            max-width: 360px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Card Profil - Mobile Friendly */
+        .profile-card {
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid var(--color-silver);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Header Profil */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--color-grid);
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--color-black);
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            color: var(--color-light);
+            margin-bottom: 8px;
+            border: 2px solid var(--color-silver);
+        }
+
+        .profile-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--color-light);
+            text-transform: uppercase;
+        }
+
+        /* Status Role */
+        .status-module {
+            margin-top: 8px;
+            padding: 5px 10px;
+            background: #2a2a2a;
+            border: 1px solid var(--color-silver);
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-light);
+            display: inline-block;
+        }
+
+        /* Styling untuk roles */
+        .status-owner { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
+        .status-admin { background: linear-gradient(135deg, #FF6B6B, #FF8E8E); color: #fff; }
+        .status-reseller { background: linear-gradient(135deg, #4ECDC4, #6BFFE6); color: #000; }
+        .status-user { background: linear-gradient(135deg, #95E1D3, #B5EAD7); color: #000; }
+
+        /* Section Info */
+        .profile-info-section {
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-grid);
+            border-radius: 5px;
+        }
+
+        .profile-info-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--color-silver);
+            text-transform: uppercase;
+            margin: 0 0 8px 0;
+            font-size: 11px;
+            text-align: center;
+            border-bottom: 1px dashed var(--color-grid);
+            padding-bottom: 5px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            font-size: 11px;
+        }
+
+        .info-label {
+            color: var(--color-silver);
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: var(--color-light);
+        }
+
+        .info-value.expired {
+            color: var(--color-warning);
+            animation: warning-pulse 1s infinite alternate;
+        }
+
+        @keyframes warning-pulse {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        /* User Management */
+        .user-management-section {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-grid);
+            border-radius: 5px;
+        }
+
+        .user-management-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--color-silver);
+            text-transform: uppercase;
+            margin: 0 0 8px 0;
+            font-size: 11px;
+            text-align: center;
+            border-bottom: 1px dashed var(--color-grid);
+            padding-bottom: 5px;
+        }
+
+        .management-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .management-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px;
+            background: #4ECDC4;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            transition: transform 0.2s;
+        }
+
+        .management-btn:active {
+            transform: scale(0.98);
+        }
+
+        .management-btn.owner { background: #FFD700; }
+        .management-btn.admin { background: #FF6B6B; color: #fff; }
+        .management-btn.reseller { background: #4ECDC4; }
+
+        /* Close Button */
+        .close-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Footer */
+        .profile-footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 9px;
+            color: #fff;
+        }
+
+        /* Hidden Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Simple Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) translateX(20px);
+                opacity: 0;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Media Queries untuk Mobile */
+        @media (max-width: 360px) {
+            body {
+                padding: 10px 5px;
+            }
+            
+            .profile-card {
+                padding: 10px;
+            }
+            
+            .profile-name {
+                font-size: 16px;
+            }
+            
+            .profile-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-silver);
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Simple Particle Background -->
+    <div class="particles" id="particles"></div>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar" id="userAvatar">
+                    <span class="loading"></span>
+                </div>
+                <h1 class="profile-name" id="userName">LOADING...</h1>
+                
+                <div class="status-module" id="roleStatus">
+                    <span class="icon fas fa-lock"></span>
+                    <span id="roleText">LOADING ROLE...</span>
+                </div>
+            </div>
+
+            <!-- Credentials Section -->
+            <div class="profile-info-section">
+                <h3>// CORE CREDENTIALS</h3>
+                <div class="info-item">
+                    <span class="info-label">USER ID:</span>
+                    <span class="info-value" id="userId">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ACCESS LEVEL:</span>
+                    <span class="info-value" id="accessLevel">-</span>
+                </div>
+            </div>
+
+            <!-- Access Log Section -->
+            <div class="profile-info-section">
+                <h3>// ACCESS LOG</h3>
+                <div class="info-item">
+                    <span class="info-label">EXPIRES ON:</span>
+                    <span class="info-value" id="expiryDate">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ACTIVE SENDERS:</span>
+                    <span class="info-value" id="activeSenders">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">DAYS REMAINING:</span>
+                    <span class="info-value" id="daysRemaining">-</span>
+                </div>
+            </div>
+
+            <!-- User Management Section -->
+            <div class="user-management-section hidden" id="userManagementSection">
+                <h3>// USER MANAGEMENT</h3>
+                <div class="management-buttons">
+                    <a href="/userlist" class="management-btn" id="listUsersBtn">
+                        <i class="fas fa-list"></i> LIST USERS
+                    </a>
+                    <a href="/adduser" class="management-btn" id="addUserBtn">
+                        <i class="fas fa-user-plus"></i> ADD USER
+                    </a>
+                </div>
+            </div>
+
+            <!-- Close Button -->
+            <button class="close-btn" onclick="closeProfile()">
+                <i class="fas fa-times"></i> TUTUP PROFIL
+            </button>
+
+            <div class="profile-footer">
+                &copy;2025 INDICTIVE CORE. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Simple Particle System
+    function createParticles() {
+        const container = document.getElementById('particles');
+        const particleCount = 30; // Sangat ringan
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Random position
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = Math.random() * 100 + 'vh';
+            
+            // Random animation delay
+            particle.style.animationDelay = Math.random() * 6 + 's';
+            particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            
+            container.appendChild(particle);
+        }
+    }
+
+    // Close profile function
+function closeProfile() {
+    // Function untuk mendapatkan URL dashboard yang sesuai
+    function getDashboardUrl() {
+        const savedDashboard = localStorage.getItem('currentDashboard');
+        
+        // Default ke dashboard jika tidak ada pilihan yang tersimpan
+        if (savedDashboard === 'dashboard2') {
+            return '/dashboard2';
+        } else {
+            return '/dashboard'; // Default
+        }
+    }
+
+    const targetUrl = getDashboardUrl();
+    
+    // SELALU redirect ke dashboard, tidak peduli dari mana asalnya
+    window.location.href = targetUrl;
+}
+
+    // User Data Functions
+    let currentUserRole = 'user';
+
+    function updateRoleDisplay(role) {
+        const roleElement = document.getElementById('roleText');
+        const statusModule = document.getElementById('roleStatus');
+        
+        if (!roleElement || !statusModule) return;
+        
+        roleElement.textContent = `ROLE: ${role.toUpperCase()}`;
+        statusModule.className = 'status-module';
+        
+        switch(role.toLowerCase()) {
+            case 'owner':
+                statusModule.classList.add('status-owner');
+                break;
+            case 'admin':
+                statusModule.classList.add('status-admin');
+                break;
+            case 'reseller':
+                statusModule.classList.add('status-reseller');
+                break;
+            default:
+                statusModule.classList.add('status-user');
+        }
+
+        currentUserRole = role.toLowerCase();
+        
+        const userManagementSection = document.getElementById('userManagementSection');
+        if (['owner', 'admin', 'reseller'].includes(currentUserRole)) {
+            userManagementSection.classList.remove('hidden');
+            
+            const buttons = userManagementSection.querySelectorAll('.management-btn');
+            buttons.forEach(btn => {
+                btn.className = btn.className.replace(/management-btn\s*(owner|admin|reseller)?/, 'management-btn ' + currentUserRole);
+            });
+        } else {
+            userManagementSection.classList.add('hidden');
+        }
+    }
+
+    function updateUserAvatar(username) {
+        const avatarElement = document.getElementById('userAvatar');
+        if (avatarElement && username) {
+            const firstLetter = username.charAt(0).toUpperCase();
+            avatarElement.innerHTML = firstLetter;
+        }
+    }
+
+    function updateUserData(data) {
+        // Update basic info
+        document.getElementById('userName').textContent = data.username;
+        updateUserAvatar(data.username);
+        updateRoleDisplay(data.role);
+        document.getElementById('userId').textContent = data.username;
+        document.getElementById('accessLevel').textContent = data.role.toUpperCase();
+        
+        // Update expiry info
+        const expiryElement = document.getElementById('expiryDate');
+        expiryElement.textContent = data.expired;
+        
+        const now = new Date();
+        const expiryDate = new Date(data.expired);
+        if (expiryDate < now) {
+            expiryElement.classList.add('expired');
+        }
+        
+        // Update stats
+        document.getElementById('activeSenders').textContent = data.activeSenders || '0';
+        
+        const daysElement = document.getElementById('daysRemaining');
+        daysElement.textContent = data.daysRemaining || '0';
+        if (data.daysRemaining <= 0) {
+            daysElement.classList.add('expired');
+        }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create light particles
+        createParticles();
+
+        // Load user data
+        setTimeout(() => {
+            fetch('/api/option-data')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
+                .then(data => {
+                    updateUserData(data);
+                })
+                .catch(error => {
+                    console.error('Error loading user data:', error);
+                    const fallbackData = {
+                        username: 'user',
+                        role: 'user',
+                        expired: '2025-12-31',
+                        activeSenders: 0,
+                        daysRemaining: 0
+                    };
+                    updateUserData(fallbackData);
+                });
+        }, 500);
+    });
+</script>
+</body>
+</html>

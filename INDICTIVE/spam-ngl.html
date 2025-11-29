@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGL Spam Tool - DictiveCore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* CSS dengan skema warna hitam-putih-silver */
+        :root {
+            --primary-black: #000000;
+            --carbon-dark: #111111;
+            --carbon-medium: #1a1a1a;
+            --carbon-light: #2a2a2a;
+            --accent-silver: #c0c0c0;
+            --accent-silver-light: #e0e0e0;
+            --accent-silver-dark: #a0a0a0;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --success: #00C851;
+            --error: #ff4444;
+            --warning: #ffaa00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--primary-black);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(192, 192, 192, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(224, 224, 224, 0.08) 0%, transparent 50%),
+                var(--primary-black);
+            z-index: -2;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, white, var(--accent-silver-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(192, 192, 192, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95em;
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--accent-silver-light);
+            box-shadow: 0 0 0 2px rgba(192, 192, 192, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--accent-silver), var(--accent-silver-dark));
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            color: #000;
+            box-shadow: 0 6px 20px rgba(160, 160, 160, 0.3);
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        .range-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .range-group input[type="range"] {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .range-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-silver-light);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(192, 192, 192, 0.4);
+        }
+
+        .range-value {
+            min-width: 70px;
+            text-align: center;
+            background: var(--accent-silver);
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9em;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .quick-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .quick-btn:hover {
+            background: var(--accent-silver);
+            color: var(--primary-black);
+            transform: translateY(-2px);
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-silver), var(--accent-silver-light));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .btn {
+            padding: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-silver), var(--accent-silver-dark));
+            color: #000;
+            box-shadow: 0 6px 20px rgba(160, 160, 160, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(192, 192, 192, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(192, 192, 192, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .log-container {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            margin-top: 20px;
+            height: 250px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        .log-entry {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .success { color: var(--success); }
+        .error { color: var(--error); }
+        .warning { color: var(--warning); }
+        .info { color: var(--accent-silver-light); }
+
+        .footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+        }
+
+        .footer-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .footer-btn {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.8em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .footer-btn:hover {
+            background: var(--accent-silver);
+            color: var(--primary-black);
+        }
+
+        .status-info {
+            font-size: 0.8em;
+            color: var(--accent-silver-light);
+            font-weight: 600;
+        }
+
+        .limit-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .limit-header {
+            text-align: center;
+            margin-bottom: 15px;
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .limit-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .limit-label {
+            color: #bbb;
+            font-weight: 500;
+        }
+
+        .limit-value {
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        .limit-value.warning {
+            color: var(--warning);
+        }
+
+        .limit-value.danger {
+            color: var(--error);
+        }
+
+        .quick-stats {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-stats h3 {
+            font-family: 'Orbitron', monospace;
+            color: #fff;
+            margin: 0 0 20px 0;
+            text-align: center;
+            font-size: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-card-small {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card-small:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+        }
+        
+        .stat-card-small .stat-label {
+            font-size: 12px;
+            color: #bbb;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card-small .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .stat-card-small .stat-progress {
+            background: rgba(0,0,0,0.3);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .stat-card-small .stat-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-silver), var(--accent-silver-light));
+            border-radius: 3px;
+        }
+
+        /* Perbaikan dan penambahan baru */
+
+        /* Dashboard selector */
+        .dashboard-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .dashboard-btn:hover::before {
+            left: 100%;
+        }
+
+        .dashboard-btn:hover {
+            background: rgba(192, 192, 192, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-btn.active {
+            background: var(--accent-silver);
+            color: var(--primary-black);
+        }
+
+        /* Animasi untuk tombol */
+        .btn-animated {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-animated::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn-animated:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        /* Efek glow pada card */
+        .card-glow {
+            position: relative;
+        }
+
+        .card-glow::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-silver), var(--accent-silver-light), var(--accent-silver));
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card-glow:hover::before {
+            opacity: 0.3;
+        }
+
+        /* Header yang lebih menarik */
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--accent-silver-light);
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+        }
+
+        /* Animasi loading untuk tombol attack */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #000000;
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 1.6em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .footer-buttons {
+                justify-content: center;
+            }
+
+            .dashboard-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Animasi sederhana */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Icon styling */
+        .fas, .fab {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Simplified Background -->
+    <div class="grid-bg"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="card card-glow">
+            <div class="page-header">
+                <div class="page-icon">
+                    <i class="fas fa-message"></i>
+                </div>
+                <h1 class="page-title">NGL Spam Tool</h1>
+                <div class="page-subtitle">Advanced Message Delivery System for NGL.link</div>
+            </div>
+        </div>
+
+        <!-- Limit Info -->
+        <div class="card card-glow">
+            <div class="limit-info">
+                <div class="limit-header">
+                    <i class="fas fa-shield-alt"></i> Limit Harian Kamu
+                </div>
+                <div class="limit-row">
+                    <span class="limit-label">Digunakan Hari Ini:</span>
+                    <span class="limit-value" id="usageToday">0 / 200 pesan</span>
+                </div>
+                <div class="limit-row">
+                    <span class="limit-label">Sisa Limit:</span>
+                    <span class="limit-value" id="remainingLimit">200 pesan</span>
+                </div>
+                <div class="limit-row">
+                    <span class="limit-label">Reset:</span>
+                    <span class="limit-value">Midnight (00:00 WIB)</span>
+                </div>
+                <div class="limit-row">
+                    <span class="limit-label">Max Per Request:</span>
+                    <span class="limit-value">100 pesan</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card card-glow">
+            <div class="quick-stats">
+                <h3><i class="fas fa-chart-pie"></i> Statistik Penggunaan</h3>
+                <div class="stats-grid">
+                    <div class="stat-card-small">
+                        <div class="stat-label"><i class="fas fa-user-plus"></i> User Limit</div>
+                        <div class="stat-number">200</div>
+                        <div class="stat-label">limit per user</div>
+                    </div>
+                    
+                    <div class="stat-card-small">
+                        <div class="stat-label"><i class="fas fa-user"></i> Penggunaan Kamu</div>
+                        <div class="stat-number" id="usageStat">0<span style="font-size: 14px; color: #888;">/200</span></div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="usageProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card-small">
+                        <div class="stat-label"><i class="fas fa-check-circle"></i> Sisa Limit</div>
+                        <div class="stat-number" id="remainingStat">200</div>
+                        <div class="stat-label">pesan tersisa hari ini</div>
+                    </div>
+
+                    <div class="stat-card-small">
+                        <div class="stat-label"><i class="fas fa-clock"></i> Reset Dalam</div>
+                        <div class="stat-number" id="resetTimer">--:--:--</div>
+                        <div class="stat-label">(Midnight WIB)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="card card-glow">
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> Username Target NGL</label>
+                <input type="text" id="target" placeholder="Masukkan username NGL (tanpa @)...">
+            </div>
+
+            <div class="input-group">
+                <label><i class="fas fa-comment-alt"></i> Pesan untuk Spam</label>
+                <textarea id="message" placeholder="Masukkan pesan yang ingin di-spam...">Hallo</textarea>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="sentCount">0</div>
+                    <div class="stat-label">Messages Sent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="successCount">0</div>
+                    <div class="stat-label">Successful</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="errorCount">0</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="input-group">
+                <label><i class="fas fa-paper-plane"></i> Message Count</label>
+                <div class="range-group">
+                    <input type="range" id="countRange" min="1" max="100" value="10">
+                    <input type="number" id="count" min="1" max="100" value="10" class="range-value">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label><i class="fas fa-clock"></i> Delay (milliseconds)</label>
+                <div class="range-group">
+                    <input type="range" id="delayRange" min="100" max="5000" step="100" value="1000">
+                    <input type="number" id="delay" min="100" max="10000" value="1000" class="range-value">
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-grid">
+                <button class="quick-btn btn-animated" onclick="setQuickSettings(5, 500)"><i class="fas fa-bolt"></i> Fast (5 msg)</button>
+                <button class="quick-btn btn-animated" onclick="setQuickSettings(20, 1000)"><i class="fas fa-running"></i> Medium (20 msg)</button>
+                <button class="quick-btn btn-animated" onclick="setQuickSettings(50, 2000)"><i class="fas fa-skull"></i> Heavy (50 msg)</button>
+                <button class="quick-btn btn-animated" onclick="setQuickSettings(100, 3000)"><i class="fas fa-fire"></i> Extreme (100 msg)</button>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary btn-animated" onclick="startAttack()" id="attackBtn">
+                    <i class="fas fa-play"></i> Start Attack
+                </button>
+                <button class="btn btn-secondary btn-animated" onclick="clearLog()">
+                    <i class="fas fa-broom"></i> Clear Log
+                </button>
+            </div>
+
+            <div id="limitWarning" style="display: none; color: var(--error); text-align: center; margin-top: 10px;">
+                ⚠️ Limit harian kamu sudah habis. Reset di midnight.
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="card card-glow">
+            <div class="log-container" id="log">
+                <!-- Log entries will appear here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-buttons">
+                <a href="/dashboard" class="footer-btn btn-animated"><i class="fas fa-tachometer-alt"></i> Dashboard 01</a>
+                <a href="/dashboard2" class="footer-btn btn-animated"><i class="fas fa-tachometer-alt-fast"></i> Dashboard 02</a>
+            </div>
+            <div class="status-info">
+                <i class="fas fa-circle" style="color: var(--success)"></i> System Ready
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variabel global yang lebih ringan
+        let isRunning = false;
+        let stats = { sent: 0, success: 0, error: 0 };
+        let userData = {
+            usageToday: 0,
+            maxDailyLimit: 200
+        };
+
+        // Fungsi untuk mengambil data statistik dari server
+        async function fetchUserStats() {
+            try {
+                const response = await fetch('/api/ngl-stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    userData.usageToday = data.userStats.todayUsage;
+                    userData.maxDailyLimit = data.userStats.dailyLimit;
+                    utils.updateUsageStats();
+                }
+            } catch (error) {
+                console.error('Gagal mengambil statistik:', error);
+            }
+        }
+
+        // Fungsi utilitas yang dioptimalkan
+        const utils = {
+            delay: ms => new Promise(r => setTimeout(r, ms)),
+            
+            logMessage: (msg, type = 'info') => {
+                const log = document.getElementById('log');
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+                entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}`;
+                log.appendChild(entry);
+                log.scrollTop = log.scrollHeight;
+            },
+            
+            updateStats: (type = 'sent') => {
+                stats[type]++;
+                document.getElementById('sentCount').textContent = stats.sent;
+                document.getElementById('successCount').textContent = stats.success;
+                document.getElementById('errorCount').textContent = stats.error;
+                
+                const total = parseInt(document.getElementById('count').value);
+                if (total > 0) {
+                    const progress = (stats.sent / total) * 100;
+                    document.getElementById('progressFill').style.width = `${Math.min(progress, 100)}%`;
+                }
+            },
+
+            updateUsageStats: () => {
+                const remaining = userData.maxDailyLimit - userData.usageToday;
+                const usagePercentage = (userData.usageToday / userData.maxDailyLimit) * 100;
+                
+                document.getElementById('usageToday').textContent = `${userData.usageToday} / ${userData.maxDailyLimit} pesan`;
+                document.getElementById('remainingLimit').textContent = `${remaining} pesan`;
+                document.getElementById('usageStat').innerHTML = `${userData.usageToday}<span style="font-size: 14px; color: #888;">/${userData.maxDailyLimit}</span>`;
+                document.getElementById('remainingStat').textContent = remaining;
+                document.getElementById('usageProgress').style.width = `${usagePercentage}%`;
+                
+                // Update count input max value
+                const countInput = document.getElementById('count');
+                countInput.max = Math.min(100, remaining);
+                
+                // Show warning if limit is reached
+                if (remaining <= 0) {
+                    document.getElementById('attackBtn').disabled = true;
+                    document.getElementById('limitWarning').style.display = 'block';
+                } else {
+                    document.getElementById('attackBtn').disabled = false;
+                    document.getElementById('limitWarning').style.display = 'none';
+                }
+            }
+        };
+
+        // Fungsi utama attack yang terhubung dengan backend
+        async function startAttack() {
+            if (isRunning) {
+                alert("Attack sedang berjalan!");
+                return;
+            }
+            
+            const target = document.getElementById('target').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const count = parseInt(document.getElementById('count').value);
+            const delayMs = parseInt(document.getElementById('delay').value);
+
+            // Validasi input
+            if (!target || !message) {
+                alert("Harap isi Target dan Pesan!");
+                return;
+            }
+
+            // Validasi limit
+            const remaining = userData.maxDailyLimit - userData.usageToday;
+            if (count > remaining) {
+                alert(`Jumlah pesan melebihi sisa limit harian! Sisa: ${remaining} pesan`);
+                return;
+            }
+
+            // Reset state
+            stats = { sent: 0, success: 0, error: 0 };
+            utils.updateStats();
+            isRunning = true;
+            
+            // Update UI
+            const attackBtn = document.getElementById('attackBtn');
+            attackBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Attack';
+            attackBtn.onclick = stopAttack;
+            attackBtn.classList.add('btn-secondary');
+            attackBtn.classList.remove('btn-primary');
+            
+            document.getElementById('log').innerHTML = "";
+            
+            utils.logMessage(`🚀 Memulai spam pesan ke ${target}...`, "info");
+
+            try {
+                // Kirim request ke backend
+                const response = await fetch('/api/ngl-spam-js', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        target: target,
+                        message: message,
+                        count: count,
+                        delay: delayMs
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    utils.logMessage(`✅ Attack berhasil dimulai!`, "success");
+                    utils.logMessage(`📊 Target: ${target}`, "info");
+                    utils.logMessage(`📝 Pesan: ${message}`, "info");
+                    utils.logMessage(`🔢 Jumlah: ${count} pesan`, "info");
+                    
+                    // Update stats dari hasil backend
+                    if (result.stats) {
+                        userData.usageToday = result.stats.userToday;
+                        utils.updateUsageStats();
+                    }
+                    
+                    // Simulasi progress (dalam implementasi nyata, gunakan WebSocket atau polling)
+                    for (let i = 0; i < count && isRunning; i++) {
+                        await utils.delay(delayMs);
+                        utils.updateStats('sent');
+                        utils.updateStats('success');
+                    }
+                    
+                } else {
+                    utils.logMessage(`❌ Gagal memulai attack: ${result.error}`, "error");
+                }
+                
+            } catch (error) {
+                utils.logMessage(`💥 System Error: ${error.message}`, "error");
+            } finally {
+                isRunning = false;
+                attackBtn.innerHTML = '<i class="fas fa-play"></i> Start Attack';
+                attackBtn.onclick = startAttack;
+                attackBtn.classList.remove('btn-secondary');
+                attackBtn.classList.add('btn-primary');
+                utils.logMessage("🏁 Spam selesai!", "success");
+                
+                // Refresh stats setelah selesai
+                await fetchUserStats();
+            }
+        }
+
+        function stopAttack() {
+            isRunning = false;
+            const attackBtn = document.getElementById('attackBtn');
+            attackBtn.innerHTML = '<i class="fas fa-play"></i> Start Attack';
+            attackBtn.onclick = startAttack;
+            attackBtn.classList.remove('btn-secondary');
+            attackBtn.classList.add('btn-primary');
+            utils.logMessage("⏹️ Spam dihentikan", "warning");
+        }
+
+        function setQuickSettings(count, delay) {
+            document.getElementById('count').value = count;
+            document.getElementById('countRange').value = count;
+            document.getElementById('delay').value = delay;
+            document.getElementById('delayRange').value = delay;
+            utils.logMessage(`⚡ Preset: ${count} pesan, ${delay}ms delay`, "info");
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            utils.logMessage('🗑️ Log dibersihkan', "info");
+        }
+
+        // Countdown timer ke midnight
+        function updateResetTimer() {
+            const now = new Date();
+            const midnight = new Date();
+            midnight.setHours(24, 0, 0, 0);
+            
+            const diff = midnight - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const timerElement = document.getElementById('resetTimer');
+            if (timerElement) {
+                timerElement.textContent = 
+                    String(hours).padStart(2, '0') + ':' +
+                    String(minutes).padStart(2, '0') + ':' +
+                    String(seconds).padStart(2, '0');
+            }
+        }
+
+        // Event listeners ketika halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sync range dan number inputs
+            const syncInputs = (rangeId, numberId) => {
+                const range = document.getElementById(rangeId);
+                const number = document.getElementById(numberId);
+                
+                range.addEventListener('input', () => number.value = range.value);
+                number.addEventListener('input', () => range.value = number.value);
+            };
+            
+            syncInputs('countRange', 'count');
+            syncInputs('delayRange', 'delay');
+
+            // Initialize usage stats
+            fetchUserStats();
+            utils.updateUsageStats();
+
+            // Update timer every second
+            setInterval(updateResetTimer, 1000);
+
+            // Log welcome message
+            setTimeout(() => {
+                utils.logMessage('🚀 Sistem NGL Spam siap digunakan', 'success');
+                utils.logMessage('⚙️ Masukkan username target dan pesan untuk memulai', 'info');
+            }, 500);
+
+            // Tambahkan efek ripple pada tombol
+            const buttons = document.querySelectorAll('.btn-animated');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Hanya untuk tombol yang bukan link
+                    if (this.tagName === 'BUTTON') {
+                        const x = e.clientX - e.target.getBoundingClientRect().left;
+                        const y = e.clientY - e.target.getBoundingClientRect().top;
+                        
+                        const circle = document.createElement('span');
+                        circle.classList.add('ripple');
+                        circle.style.left = x + 'px';
+                        circle.style.top = y + 'px';
+                        
+                        this.appendChild(circle);
+                        
+                        setTimeout(() => {
+                            circle.remove();
+                        }, 600);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

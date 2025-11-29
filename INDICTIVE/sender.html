@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Senders - DICTIVE CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variabel dan Reset Dasar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #000000;
+            --deep-black: #0d0d0d;
+            --carbon-dark: #1a1a1a;
+            --carbon-medium: #242424;
+            --carbon-light: #2e2e2e;
+            --silver: #c0c0c0;
+            --silver-light: #e8e8e8;
+            --silver-dark: #a0a0a0;
+            --chrome: #b8b8b8;
+            --text-primary: #ffffff;
+            --text-secondary: #c0c0c0;
+            --text-tertiary: #909090;
+            --success-color: #00ff88;
+            --error-color: #ff3366;
+            --info-color: #00d9ff;
+            --warning-color: #ffaa00;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--primary-black);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Background Effects */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 49%, rgba(192, 192, 192, 0.03) 49%, rgba(192, 192, 192, 0.03) 51%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, rgba(192, 192, 192, 0.03) 49%, rgba(192, 192, 192, 0.03) 51%, transparent 51%),
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(192, 192, 192, 0.08) 0%, transparent 50%),
+                var(--primary-black);
+            background-size: 50px 50px, 50px 50px, 100% 100%, 100% 100%;
+            z-index: -2;
+        }
+        
+        .grid-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, var(--primary-black) 100%);
+            z-index: 1;
+        }
+        
+        /* Header tanpa navbar */
+        .page-header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--carbon-medium), var(--carbon-dark));
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--silver-dark);
+            margin-bottom: 30px;
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            box-shadow: 
+                0 0 20px rgba(192, 192, 192, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .back-btn:hover::before {
+            left: 100%;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, var(--silver), var(--chrome));
+            color: var(--primary-black);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 25px rgba(192, 192, 192, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: var(--silver-light);
+        }
+        
+        /* Main Content Styling */
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            text-align: center;
+            margin: 20px 0 10px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--silver-light) 50%, var(--silver) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--silver), transparent);
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            text-align: center;
+            font-weight: 400;
+        }
+        
+        .user-sender-section {
+            max-width: 800px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, var(--deep-black), var(--carbon-dark));
+            border: 1px solid rgba(192, 192, 192, 0.2);
+            border-radius: 25px;
+            padding: 30px 40px;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 50px rgba(192, 192, 192, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-sender-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--silver), transparent);
+        }
+        
+        /* Instruction Box Styling */
+        .instruction-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(192, 192, 192, 0.05));
+            border: 2px solid var(--silver-dark);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 
+                0 0 30px rgba(192, 192, 192, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .instruction-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--silver-light), var(--silver-dark));
+            border-radius: 15px 0 0 15px;
+        }
+
+        .instruction-box h4 {
+            color: var(--silver-light);
+            margin-bottom: 15px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.3);
+        }
+
+        .instruction-box ol {
+            color: var(--text-secondary);
+            padding-left: 25px;
+            font-size: 15px;
+            list-style-type: decimal-leading-zero;
+        }
+
+        .instruction-box li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .instruction-box li strong {
+            color: white;
+            font-weight: 700;
+        }
+
+        /* Form Styling */
+        .add-sender-form {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--silver-light);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.2);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 18px;
+            border-radius: 15px;
+            border: 2px solid var(--carbon-light);
+            background: linear-gradient(135deg, var(--deep-black), var(--carbon-dark));
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-field:focus {
+            border-color: var(--silver);
+            box-shadow: 
+                0 0 20px rgba(192, 192, 192, 0.3),
+                inset 0 2px 5px rgba(0, 0, 0, 0.5),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+            background: var(--carbon-medium);
+        }
+        
+        .execute-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--silver-dark), var(--silver-light));
+            border: none;
+            border-radius: 30px;
+            color: var(--primary-black);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 14px;
+            font-family: 'Orbitron', monospace;
+            box-shadow: 
+                0 5px 20px rgba(192, 192, 192, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .execute-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .execute-btn:hover::before {
+            left: 100%;
+        }
+
+        .execute-btn:hover {
+            background: linear-gradient(135deg, var(--silver-light), #ffffff);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 12px 35px rgba(192, 192, 192, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .execute-btn:active {
+            transform: translateY(-2px);
+        }
+
+        /* Senders List Styling */
+        .senders-list-container h4 {
+            color: var(--silver-light);
+            margin-bottom: 20px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            border-bottom: 2px solid rgba(192, 192, 192, 0.2);
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.3);
+        }
+        
+        .sender-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--carbon-dark), var(--carbon-medium));
+            border: 1px solid rgba(192, 192, 192, 0.2);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sender-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--silver), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sender-item:hover::before {
+            opacity: 1;
+        }
+
+        .sender-item:hover {
+            border-color: var(--silver);
+            background: linear-gradient(135deg, var(--carbon-medium), var(--carbon-light));
+            transform: translateX(5px);
+            box-shadow: 
+                0 6px 25px rgba(192, 192, 192, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .sender-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sender-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        .sender-status.connected { background: var(--success-color); animation: none; }
+        .sender-status.connecting { background: var(--warning-color); animation: pulse 1.5s infinite; }
+        .sender-status.waiting_pairing { background: var(--info-color); animation: pulse 1.5s infinite; }
+        .sender-status.disconnected, .sender-status.error { background: var(--error-color); animation: none; }
+
+        .sender-number {
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .delete-sender-btn {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, var(--error-color), #cc0033);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 
+                0 4px 10px rgba(255, 51, 102, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .delete-sender-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .delete-sender-btn:hover::before {
+            left: 100%;
+        }
+
+        .delete-sender-btn:hover {
+            background: linear-gradient(135deg, #ff0044, #990029);
+            box-shadow: 
+                0 6px 20px rgba(255, 51, 102, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .loading-text, .no-senders {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        /* Notifikasi */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            z-index: 10001;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.error { background: var(--error-color); color: white; }
+        .notification.success { background: var(--success-color); color: var(--primary-black); }
+        .notification.info { background: var(--info-color); color: var(--primary-black); }
+
+        /* Modal Pairing Code */
+        .pairing-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .pairing-modal-content {
+            background: linear-gradient(135deg, var(--carbon-dark), var(--deep-black));
+            border: 3px solid var(--silver);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            color: white;
+            text-align: center;
+            box-shadow: 
+                0 0 60px rgba(192, 192, 192, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .pairing-modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--silver-light), transparent);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .pairing-modal-content h3 {
+            color: var(--silver-light);
+            margin-bottom: 25px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            text-shadow: 0 0 20px rgba(192, 192, 192, 0.5);
+        }
+        
+        .code-display {
+            background: linear-gradient(135deg, var(--deep-black), var(--carbon-dark));
+            border: 2px solid var(--silver);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 
+                inset 0 0 20px rgba(192, 192, 192, 0.2),
+                0 0 30px rgba(192, 192, 192, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .code-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .code-text {
+            font-size: 24px; /* Diperkecil dari 36px */
+            font-weight: 900;
+            letter-spacing: 4px; /* Diperkecil dari 8px */
+            color: white;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.5),
+                0 0 40px rgba(192, 192, 192, 0.3);
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .copy-code-btn {
+            background: linear-gradient(135deg, var(--silver-dark), var(--silver-light));
+            color: var(--primary-black);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Orbitron', monospace;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 3px 10px rgba(192, 192, 192, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .copy-code-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .copy-code-btn:hover::before {
+            left: 100%;
+        }
+
+        .copy-code-btn:hover {
+            background: linear-gradient(135deg, var(--silver-light), #ffffff);
+            box-shadow: 
+                0 4px 15px rgba(192, 192, 192, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .copy-code-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-code-btn.copied {
+            background: linear-gradient(135deg, var(--success-color), #00cc6a);
+            color: var(--primary-black);
+        }
+        
+        .modal-instructions {
+            text-align: left; 
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(192, 192, 192, 0.05));
+            padding: 15px; 
+            border-radius: 10px; 
+            margin: 15px 0;
+            border-left: 5px solid var(--silver);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-instructions h4 {
+             color: var(--silver-light); 
+             margin-bottom: 10px;
+             font-family: 'Orbitron', monospace;
+             text-shadow: 0 0 10px rgba(192, 192, 192, 0.3);
+        }
+        
+        .modal-instructions ol {
+            color: var(--text-secondary);
+            padding-left: 20px;
+            font-size: 15px;
+        }
+
+        .modal-instructions li {
+            margin-bottom: 5px;
+        }
+
+        .modal-instructions strong {
+            color: white;
+        }
+
+        .modal-warning {
+            color: #ffa726; 
+            font-size: 14px; 
+            margin: 15px 0 25px;
+        }
+        
+        .close-modal-btn {
+            background: linear-gradient(135deg, var(--silver-dark), var(--silver-light));
+            color: var(--primary-black);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Orbitron', monospace;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 15px rgba(192, 192, 192, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .close-modal-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .close-modal-btn:hover::before {
+            left: 100%;
+        }
+        
+        .close-modal-btn:hover {
+            background: linear-gradient(135deg, var(--silver-light), #ffffff);
+            transform: scale(1.05);
+            box-shadow: 
+                0 6px 20px rgba(192, 192, 192, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .user-sender-section {
+                padding: 20px;
+                margin: 20px 10px;
+                border-radius: 15px;
+            }
+            
+            .add-sender-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .execute-btn {
+                width: 100%;
+            }
+            
+            .sender-item {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+                padding: 15px;
+            }
+            
+            .sender-actions {
+                align-self: flex-end;
+            }
+            
+            .pairing-modal-content {
+                padding: 30px;
+            }
+            
+            .code-text {
+                font-size: 20px;
+            }
+            
+            .code-display {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <!-- Header tanpa navbar -->
+    <div class="page-header">
+        <a href="/execution" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+        
+        <h1 class="section-title">MY SENDER</h1>
+        <p class="section-subtitle">Kelola <b>Sender</b> WhatsApp yang terhubung ke sistem Anda untuk pengiriman pesan massal.</p>
+    </div>
+
+    <main style="max-width: 1200px; margin: 0 auto;">
+        <div class="user-sender-section">
+            <div class="instruction-box">
+                <h4><i class="fas fa-satellite-dish"></i> Panduannya:</h4>
+                <ol>
+                    <li>Masukkan nomor WhatsApp dalam format internasional (Contoh: <b>6281234567890</b>, <b>447911123456</b>, <b>13105551234</b>)</li>
+                    <li>Klik "𝗔𝗗𝗗 𝗦𝗲𝗻𝗱𝗲𝗿". Sistem akan memproses dan menampilkan 𝗞𝗼𝗱𝗲 𝗣𝗮𝗶𝗿𝗶𝗻𝗴 unik.</li>
+                    <li>Buka aplikasi WhatsApp di HP Anda.</li>
+                    <li>Navigasi ke menu 𝗟𝗶𝗻𝗸𝗲𝗱 𝗗𝗲𝘃𝗶𝗰𝗲 (Perangkat Tertaut).</li>
+                    <li>Pilih 𝗟𝗶𝗻𝗸 𝗮 𝗗𝗲𝘃𝗶𝗰𝗲 (Tautkan Perangkat) dan masukkan 𝗞𝗼𝗱𝗲 𝗣𝗮𝗶𝗿𝗶𝗻𝗴 yang muncul di layar ini.</li>
+                    <li>Setelah terhubung, status sender akan berubah menjadi 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗲𝗱. Beres!</li>
+                </ol>
+            </div>
+            
+            <div class="sender-management">
+                <div class="add-sender-form">
+                    <div class="input-group">
+                        <label class="input-label" for="newSenderNumber">
+                            <i class="fas fa-mobile-alt"></i> Nomor WhatsApp
+                        </label>
+                        <input 
+                            type="text" 
+                            id="newSenderNumber" 
+                            class="input-field" 
+                            placeholder="Contoh: 6281234567890"
+                        />
+                    </div>
+                    <button id="addSenderBtn" class="execute-btn">
+                        <i class="fas fa-rocket"></i> ADD SENDER
+                    </button>
+                </div>
+                
+                <div class="senders-list-container">
+                    <h4><i class="fas fa-list-ul"></i> Daftar Sender Aktif</h4>
+                    <div id="sendersList" class="senders-list">
+                        <div class="loading-text">Memuat sender...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Function untuk menampilkan notifikasi
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove setelah 5 detik
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        // Real-time events untuk pairing code
+        function initEventStream() {
+            const eventSource = new EventSource('/api/events');
+            
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log('Received event:', data);
+                
+                switch(data.type) {
+                    case 'status':
+                        showNotification(`Status ${data.number}: ${data.status}`, 'info');
+                        updateSenderStatus(data.number, data.status);
+                        break;
+                        
+                    case 'pairing_code':
+                        showPairingCodeModal(data);
+                        updateSenderStatus(data.number, data.status);
+                        break;
+                        
+                    case 'success':
+                        showNotification(`✓ ${data.message}`, 'success');
+                        updateSenderStatus(data.number, data.status);
+                        loadUserSenders();
+                        break;
+                        
+                    case 'error':
+                        showNotification(`✗ ${data.message}`, 'error');
+                        updateSenderStatus(data.number, data.status);
+                        break;
+                }
+            };
+            
+            eventSource.onerror = function(err) {
+                console.error('EventSource error:', err);
+                setTimeout(initEventStream, 5000);
+            };
+        }
+
+        // Function untuk menampilkan modal pairing code
+        function showPairingCodeModal(data) {
+            const modalHtml = `
+                <div class="pairing-modal">
+                    <div class="pairing-modal-content">
+                        <h3>
+                            <i class="fas fa-qrcode"></i> KODE PAIRING WHATSAPP
+                        </h3>
+                        
+                        <div class="code-display">
+                            <div class="code-text" id="pairingCodeValue">
+                                ${data.code}
+                            </div>
+                            <button class="copy-code-btn" id="copyCodeBtn">
+                                <i class="fas fa-copy"></i> COPY
+                            </button>
+                        </div>
+                        
+                        <div class="modal-instructions">
+                            <h4>Langkah Cepat:</h4>
+                            <ol>
+                                <li>Buka <b>WhatsApp</b> > <b>Linked Devices</b>.</li>
+                                <li>Pilih <b>Link with phone number</b> (Tautkan dengan nomor telepon).</li>
+                                <li>Masukkan kode: <strong>${data.code}</strong>.</li>
+                                <li>Kode berlaku <b>30 detik!</b></li>
+                            </ol>
+                        </div>
+                        
+                        <div class="modal-warning">
+                            <i class="fas fa-shield-alt"></i>
+                            JANGAN berikan kode ini ke siapapun!
+                        </div>
+                        
+                        <button class="close-modal-btn" id="closeModalBtn">
+                            <i class="fas fa-times-circle"></i> SAYA MENGERTI
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            const existingModal = document.querySelector('.pairing-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Simpan kode pairing untuk fungsi copy
+            window.currentPairingCode = data.code;
+            
+            // Tambahkan event listener untuk tombol copy
+            document.getElementById('copyCodeBtn').addEventListener('click', copyPairingCode);
+            document.getElementById('closeModalBtn').addEventListener('click', closePairingModal);
+        }
+
+        // Function untuk menyalin kode pairing ke clipboard
+        function copyPairingCode() {
+            const code = window.currentPairingCode;
+            if (!code) {
+                showNotification('Tidak ada kode untuk disalin!', 'error');
+                return;
+            }
+            
+            // Buat textarea sementara untuk menyalin teks
+            const textArea = document.createElement('textarea');
+            textArea.value = code;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const copyBtn = document.getElementById('copyCodeBtn');
+                    if (copyBtn) {
+                        const originalText = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> COPIED!';
+                        copyBtn.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalText;
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }
+                    showNotification('Kode pairing berhasil disalin!', 'success');
+                } else {
+                    showNotification('Gagal menyalin kode!', 'error');
+                }
+            } catch (err) {
+                console.error('Gagal menyalin kode: ', err);
+                showNotification('Gagal menyalin kode!', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function closePairingModal() {
+            const modal = document.querySelector('.pairing-modal');
+            if (modal) {
+                modal.remove();
+            }
+            window.currentPairingCode = null;
+        }
+
+        // Function untuk update status sender di list
+        function updateSenderStatus(number, status) {
+            const sendersList = document.getElementById('sendersList');
+            const senderItem = sendersList.querySelector(`[data-number="${number}"]`);
+            
+            const statusMap = {
+                'connected': 'connected',
+                'connecting': 'connecting',
+                'waiting_pairing': 'waiting_pairing',
+                'disconnected': 'disconnected',
+                'error': 'error'
+            };
+            const statusClass = statusMap[status] || 'disconnected';
+
+            if (senderItem) {
+                const statusEl = senderItem.querySelector('.sender-status');
+                if (statusEl) {
+                    statusEl.className = 'sender-status ' + statusClass;
+                }
+            } else {
+                loadUserSenders();
+            }
+        }
+        
+        // === USER SENDER MANAGEMENT ===
+        function loadUserSenders() {
+            fetch('/api/my-senders')
+                .then(response => response.json())
+                .then(data => {
+                    const sendersList = document.getElementById('sendersList');
+                    
+                    if (!data.success || !data.senders || data.senders.length === 0) {
+                        sendersList.innerHTML = '<div class="no-senders"><i class="fas fa-exclamation-circle"></i> Belum ada sender. Tambahkan sender pertama Anda!</div>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    data.senders.forEach(sender => {
+                        const statusClass = 'connected'; // Default status
+                        html += `
+                            <div class="sender-item" data-number="${sender}">
+                                <div class="sender-info">
+                                    <div class="sender-status ${statusClass}"></div>
+                                    <span class="sender-number">${sender}</span>
+                                </div>
+                                <div class="sender-actions">
+                                    <button class="delete-sender-btn" onclick="deleteSender('${sender}')">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    sendersList.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading senders:', error);
+                    // Fallback untuk testing
+                    const sendersList = document.getElementById('sendersList');
+                    sendersList.innerHTML = `
+                        <div class="sender-item">
+                            <div class="sender-info">
+                                <div class="sender-status connected"></div>
+                                <span class="sender-number">6281234567890</span>
+                            </div>
+                            <div class="sender-actions">
+                                <button class="delete-sender-btn" onclick="deleteSender('6281234567890')">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+
+        function addSender() {
+            const numberInput = document.getElementById('newSenderNumber');
+            let number = numberInput.value.trim();
+            
+            if (!number) {
+                showNotification('Masukkan nomor terlebih dahulu!', 'error');
+                return;
+            }
+            
+            // Validasi nomor - hapus semua karakter non-digit
+            number = number.replace(/\D/g, '');
+            
+            if (number.length < 8) {
+                showNotification('Nomor terlalu pendek!', 'error');
+                return;
+            }
+            
+            const addBtn = document.getElementById('addSenderBtn');
+            const originalText = addBtn.innerHTML;
+            
+            addBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MENAMBAH...';
+            addBtn.disabled = true;
+            
+            fetch('/api/add-sender', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ number: number })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('✓ ' + data.message, 'success');
+                    numberInput.value = '';
+                    loadUserSenders();
+                } else {
+                    showNotification('✗ ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding sender:', error);
+                showNotification('✗ Terjadi error saat menambahkan sender', 'error');
+            })
+            .finally(() => {
+                addBtn.innerHTML = originalText;
+                addBtn.disabled = false;
+            });
+        }
+
+        function deleteSender(number) {
+            if (!confirm(`Yakin ingin menghapus sender ${number}? Ini akan memutuskan koneksi WhatsApp.`)) {
+                return;
+            }
+            
+            fetch('/api/delete-sender', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ number: number })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('✓ ' + data.message, 'success');
+                    loadUserSenders();
+                } else {
+                    showNotification('✗ ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting sender:', error);
+                showNotification('✗ Terjadi error saat menghapus sender', 'error');
+            });
+        }
+
+        // Event listeners untuk sender management
+        document.getElementById('addSenderBtn').addEventListener('click', addSender);
+        document.getElementById('newSenderNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addSender();
+            }
+        });
+
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            initEventStream();
+            loadUserSenders();
+        });
+    </script>
+</body>
+</html>

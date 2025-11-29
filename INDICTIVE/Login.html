@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Indictive Core - Black & White Login</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-black: #0a0a0a;
+      --carbon-dark: #121212;
+      --carbon-medium: #1a1a1a;
+      --carbon-light: #2a2a2a;
+      --pure-white: #ffffff;
+      --light-gray: #e0e0e0;
+      --medium-gray: #aaaaaa;
+      --dark-gray: #444444;
+      --text-primary: #ffffff;
+      --text-secondary: #e0e0e0;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: Poppins, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-black);
+      overflow: hidden;
+      padding: 15px;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Simplified background */
+    .grid-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+        var(--primary-black);
+      z-index: -2;
+    }
+    
+    /* Smooth Fade In Animation */
+    @keyframes smoothAppear {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+      70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.02);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    
+    .card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      max-width: 400px;
+      padding: 56px 25px;
+      background: rgba(20, 20, 20, 0.8);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      box-shadow: 
+        0 0 15px rgba(255, 255, 255, 0.2),
+        inset 0 0 40px rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      animation: smoothAppear 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation-delay: 0.5s;
+      z-index: 10;
+      text-align: center;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--pure-white), transparent);
+      border-radius: 20px 20px 0 0;
+    }
+    
+    /* Video Container dengan border animasi hitam-putih */
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 280px;
+      height: 120px;
+      margin: 0 auto 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      overflow: hidden;
+      animation: borderMove 3s linear infinite;
+      background: linear-gradient(90deg, #000, #fff, #000, #fff, #000);
+      background-size: 300% 100%;
+      padding: 3px;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #000;
+    }
+
+    @keyframes borderMove {
+      0% {
+        background-position: 0% 0%;
+      }
+      100% {
+        background-position: 300% 0%;
+      }
+    }
+    
+    /* Text Rotator Styles */
+    .text-rotator {
+      position: relative;
+      min-height: 100px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .text-set {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      display: none;
+    }
+
+    .text-set.active {
+      opacity: 1;
+      display: block;
+    }
+
+    .glitch-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      font-weight: 900;
+      position: relative;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: white;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: charFlyIn 0.5s ease-out forwards;
+    }
+
+    @keyframes charFlyIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .char.out {
+      animation: charFlyOut 0.3s ease-in forwards;
+    }
+
+    @keyframes charFlyOut {
+      to {
+        opacity: 0;
+        transform: translateY(-30px) rotateX(90deg);
+      }
+    }
+
+    /* Simplified glitch effect dengan warna hitam-putih */
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .glitch-text::before {
+      animation: glitch-1 2s infinite;
+      color: var(--medium-gray);
+      z-index: -1;
+      text-shadow: -1px 0 var(--medium-gray);
+    }
+
+    .glitch-text::after {
+      animation: glitch-2 2s infinite;
+      color: white;
+      z-index: -1;
+      text-shadow: 1px 0 var(--light-gray);
+    }
+
+    @keyframes glitch-1 {
+      0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+      20% { clip-path: inset(33% 0 33% 0); transform: translate(-1px); }
+      40% { clip-path: inset(66% 0 0 0); transform: translate(1px); }
+      60% { clip-path: inset(0 0 66% 0); transform: translate(0.5px); }
+      80% { clip-path: inset(25% 0 50% 0); transform: translate(-0.5px); }
+    }
+
+    @keyframes glitch-2 {
+      0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+      20% { clip-path: inset(50% 0 25% 0); transform: translate(1px); }
+      40% { clip-path: inset(0 0 75% 0); transform: translate(-1px); }
+      60% { clip-path: inset(75% 0 0 0); transform: translate(-0.5px); }
+      80% { clip-path: inset(40% 0 40% 0); transform: translate(0.5px); }
+    }
+    
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 25px;
+      font-weight: 400;
+      letter-spacing: 0.6px;
+      font-family: 'Courier New', monospace;
+      line-height: 1.4;
+    }
+    
+    .form-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .form-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 16px;
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+    
+    input {
+      width: 100%;
+      padding: 16px 15px 16px 45px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      -webkit-appearance: none;
+    }
+    
+    input:focus {
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 
+        0 0 0 2px rgba(255, 255, 255, 0.2),
+        0 0 15px rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    input:focus + i {
+      color: var(--pure-white);
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    input::placeholder {
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    
+    /* Neon Button Style dengan efek glitch dan font Orbitron */
+    .btn-neon {
+      background: none;
+      border: 0.15em solid var(--pure-white);
+      border-radius: 0.45em;
+      color: var(--pure-white);
+      font-size: 1.2em;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      box-shadow:
+        inset 0 0 0.5em var(--text-secondary),
+        0 0 0.5em var(--text-secondary);
+      text-transform: uppercase;
+      padding: 16px;
+      width: 100%;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+      overflow: hidden;
+      z-index: 1;
+      -webkit-appearance: none;
+      font-family: 'Orbitron', monospace;
+      animation: btnGlitch 5s infinite;
+    }
+    
+    .btn-neon::before {
+      content: '';
+      position: absolute;
+      top: 120%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--pure-white);
+      transform: perspective(1em) rotateX(40deg) scale(1, 0.35);
+      filter: blur(1em);
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      z-index: -1;
+    }
+    
+    .btn-neon::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--pure-white);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .btn-neon:hover,
+    .btn-neon:focus {
+      color: var(--primary-black);
+      text-shadow: none;
+      animation: none;
+    }
+    
+    .btn-neon:hover::before,
+    .btn-neon:focus::before {
+      opacity: 1;
+    }
+    
+    .btn-neon:hover::after,
+    .btn-neon:focus::after {
+      opacity: 1;
+    }
+    
+    @keyframes btnGlitch {
+      0%, 95%, 97%, 99%, 100% {
+        transform: translate(0);
+        text-shadow: 0 0 5px var(--pure-white);
+        box-shadow:
+          inset 0 0 0.5em var(--pure-white),
+          0 0 0.5em var(--pure-white);
+      }
+      96% {
+        transform: translate(-2px, 1px);
+        text-shadow: -2px 0 var(--medium-gray), 2px 0 var(--light-gray);
+        box-shadow:
+          inset 0 0 0.5em var(--medium-gray),
+          0 0 0.5em var(--medium-gray);
+      }
+      98% {
+        transform: translate(2px, -1px);
+        text-shadow: 2px 0 var(--light-gray), -2px 0 var(--medium-gray);
+        box-shadow:
+          inset 0 0 0.5em var(--light-gray),
+          0 0 0.5em var(--light-gray);
+      }
+    }
+    
+    .btn-neon i {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    
+    /* Neon Link Style - PUTIH */
+    .buy-access {
+      margin-top: 20px;
+      display: inline-block;
+      font-size: 14px;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 500;
+      background: none;
+      color: var(--pure-white);
+      text-decoration: none;
+      box-shadow: 
+        inset 0 0 0.5em var(--pure-white),
+        0 0 0.5em var(--pure-white);
+      font-family: Poppins, sans-serif;
+      transition: all 0.3s ease;
+      border: 0.15em solid var(--pure-white);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .buy-access::before {
+      content: '';
+      position: absolute;
+      top: 120%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--pure-white);
+      transform: perspective(1em) rotateX(40deg) scale(1, 0.35);
+      filter: blur(1em);
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      z-index: -1;
+    }
+    
+    .buy-access::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--pure-white);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .buy-access:hover::before,
+    .buy-access:active::before {
+      opacity: 1;
+    }
+    
+    .buy-access:hover::after,
+    .buy-access:active::after {
+      opacity: 1;
+    }
+    
+    .buy-access:hover,
+    .buy-access:active { 
+      color: var(--primary-black);
+      text-shadow: none;
+      animation: none;
+    }
+    
+    .buy-access i {
+      margin-right: 8px;
+    }
+    
+    .footer {
+      margin-top: 25px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      opacity: 0.8;
+      font-family: 'Courier New', monospace;
+      line-height: 1.4;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26, 26, 26, 0.95);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      animation: fadeInOut 4s ease forwards;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-width: 85%;
+      text-align: center;
+    }
+    
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translate(-50%, 30px); }
+      15% { opacity: 1; transform: translate(-50%, 0); }
+      85% { opacity: 1; transform: translate(-50%, 0); }
+      100% { opacity: 0; transform: translate(-50%, 30px); }
+    }
+    
+    /* Security indicator dengan aksen putih */
+    .security-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 15px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .security-indicator i {
+      margin-right: 8px;
+      color: var(--pure-white);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    /* Hologram Loading Animation */
+    .hologram-loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .hologram-bars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 10px;
+    }
+    
+    .hologram-bar {
+      width: 4px;
+      height: 20px;
+      background: var(--pure-white);
+      animation: hologramPulse 1.5s infinite ease-in-out;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+    
+    .hologram-bar:nth-child(2) { animation-delay: 0.1s; }
+    .hologram-bar:nth-child(3) { animation-delay: 0.2s; }
+    .hologram-bar:nth-child(4) { animation-delay: 0.3s; }
+    .hologram-bar:nth-child(5) { animation-delay: 0.4s; }
+    .hologram-bar:nth-child(6) { animation-delay: 0.5s; }
+    .hologram-bar:nth-child(7) { animation-delay: 0.6s; }
+    
+    @keyframes hologramPulse {
+      0%, 100% {
+        transform: scaleY(1);
+        opacity: 0.7;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      }
+      50% {
+        transform: scaleY(1.8);
+        opacity: 1;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 1);
+      }
+    }
+    
+    .hologram-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      color: var(--pure-white);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: hologramText 2s infinite alternate;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    }
+    
+    @keyframes hologramText {
+      0% {
+        opacity: 0.5;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      }
+      100% {
+        opacity: 1;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 1);
+      }
+    }
+    
+    /* Mobile-specific optimizations */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .card {
+        padding: 40px 20px;
+        border-radius: 18px;
+      }
+      
+      .video-container {
+        height: 110px;
+        max-width: 260px;
+        margin-bottom: 20px;
+      }
+      
+      .glitch-text {
+        font-size: 24px;
+      }
+      
+      .subtitle {
+        font-size: 13px;
+        margin-bottom: 20px;
+      }
+      
+      input {
+        padding: 14px 15px 14px 45px;
+        font-size: 16px;
+      }
+      
+      .btn-neon {
+        padding: 14px;
+        font-size: 1.1em;
+      }
+      
+      .buy-access {
+        padding: 12px 20px;
+        font-size: 13px;
+      }
+      
+      .footer {
+        font-size: 10px;
+      }
+      
+      .hologram-bar {
+        width: 3px;
+        height: 18px;
+      }
+      
+      .hologram-text {
+        font-size: 11px;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .video-container {
+        height: 100px;
+        max-width: 240px;
+      }
+      
+      .glitch-text {
+        font-size: 22px;
+      }
+      
+      .subtitle {
+        font-size: 12px;
+      }
+    }
+    
+    /* Prevent zoom on input focus for iOS */
+    @media screen and (max-width: 768px) {
+      input, textarea, select {
+        font-size: 16px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Simplified Background -->
+  <div class="grid-bg"></div>
+
+  <div class="card">
+    <div class="video-container">
+      <video autoplay muted loop>
+        <source src="https://files.catbox.moe/l2iszm.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    
+    <!-- Text Rotator -->
+    <div class="text-rotator">
+      <div class="text-set active">
+        <h1 class="glitch-text" data-text="INDICTIVE CORE">INDICTIVE CORE</h1>
+        <p class="subtitle">Gateway to System API</p>
+      </div>
+      <div class="text-set">
+        <h1 class="glitch-text" data-text="KEY ACCESS">KEY ACCESS</h1>
+        <p class="subtitle">Secure Encrypted Login</p>
+      </div>
+      <div class="text-set">
+        <h1 class="glitch-text" data-text="WELCOME">WELCOME</h1>
+        <p class="subtitle">Welcome to Indictive Core V3</p>
+      </div>
+    </div>
+
+    <form method="POST" action="/auth">
+      <div class="form-group">
+        <i class="fas fa-user"></i>
+        <input type="text" name="username" placeholder="Username" required />
+      </div>
+      <div class="form-group">
+        <i class="fas fa-key"></i>
+        <input type="password" name="key" placeholder="Password" required />
+      </div>
+      <button type="submit" class="btn-neon">
+        <i class="fa-solid fa-right-to-bracket"></i>ACCESS
+      </button>
+    </form>
+
+    <div class="security-indicator">
+      <i class="fas fa-shield-alt"></i> Encrypted Connection
+    </div>
+
+    <a class="buy-access" href="https://t.me/AiiSigma" target="_blank">
+      <i class="fas fa-coins"></i> Get Access Key
+    </a>
+
+    <div class="footer">© 2025 - AiiSigma | Secure Interface</div>
+  </div>
+
+  <div id="toast" class="toast" style="display:none;"></div>
+  
+  <script>
+    // Toast message handling
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get("msg");
+
+    if (msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+    }
+
+    // Text rotation with character animation
+    const textSets = document.querySelectorAll('.text-set');
+    let currentIndex = 0;
+    let isAnimating = false;
+
+    function wrapTextInSpans(element) {
+      const text = element.textContent;
+      element.innerHTML = text.split('').map((char, i) => 
+        `<span class="char" style="animation-delay: ${i * 0.05}s">${char === ' ' ? '&nbsp;' : char}</span>`
+      ).join('');
+    }
+
+    function animateTextIn(textSet) {
+      const glitchText = textSet.querySelector('.glitch-text');
+      const subtitle = textSet.querySelector('.subtitle');
+      
+      // Wrap text in spans for animation
+      wrapTextInSpans(glitchText);
+      
+      // Update data attribute for glitch effect
+      glitchText.setAttribute('data-text', glitchText.textContent);
+      
+      // Show subtitle after main text
+      setTimeout(() => {
+        subtitle.classList.add('visible');
+      }, 800);
+    }
+
+    function animateTextOut(textSet) {
+      const chars = textSet.querySelectorAll('.char');
+      const subtitle = textSet.querySelector('.subtitle');
+      
+      // Animate characters out
+      chars.forEach((char, i) => {
+        char.style.animationDelay = `${i * 0.02}s`;
+        char.classList.add('out');
+      });
+      
+      // Hide subtitle
+      subtitle.classList.remove('visible');
+    }
+
+    function rotateText() {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      const currentSet = textSets[currentIndex];
+      const nextIndex = (currentIndex + 1) % textSets.length;
+      const nextSet = textSets[nextIndex];
+
+      // Animate out current text
+      animateTextOut(currentSet);
+
+      // After out animation, switch sets
+      setTimeout(() => {
+        currentSet.classList.remove('active');
+        nextSet.classList.add('active');
+        animateTextIn(nextSet);
+        
+        currentIndex = nextIndex;
+        isAnimating = false;
+      }, 600);
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add focus effects to form inputs
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+          this.parentElement.querySelector('i').style.color = 'var(--pure-white)';
+          this.parentElement.querySelector('i').style.transform = 'translateY(-50%) scale(1.1)';
+        });
+        
+        input.addEventListener('blur', function() {
+          this.parentElement.querySelector('i').style.color = 'var(--text-secondary)';
+          this.parentElement.querySelector('i').style.transform = 'translateY(-50%) scale(1)';
+        });
+      });
+      
+      // Initialize first text set
+      textSets[0].classList.add('active');
+      animateTextIn(textSets[0]);
+
+      // Start rotation after initial display
+      setTimeout(() => {
+        setInterval(rotateText, 5000); // Change every 5 seconds
+      }, 4000);
+    });
+    
+    // Prevent form submission animation issues on mobile
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const button = this.querySelector('button[type="submit"]');
+      button.disabled = true;
+      
+      // Replace button content with hologram loader
+      button.innerHTML = `
+        <div class="hologram-loader">
+          <div class="hologram-bars">
+            <div class="hologram-bar"></div>
+            <div class="hologram-bar"></div>
+            <div class="hologram-bar"></div>
+            <div class="hologram-bar"></div>
+            <div class="hologram-bar"></div>
+            <div class="hologram-bar"></div>
+            <div class="hologram-bar"></div>
+          </div>
+          <div class="hologram-text">PROCESSING</div>
+        </div>
+      `;
+      
+      // Simulate processing delay
+      setTimeout(() => {
+        button.disabled = false;
+        button.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> ACCESS';
+        
+        // Submit form after animation
+        this.submit();
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
